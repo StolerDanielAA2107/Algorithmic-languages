@@ -8,48 +8,74 @@ using namespace std;
 struct pipe		//структура труба
 {
 	double length, diameter;	// длина, диаметр
-	int priznak;	// признак "в работе"
+	bool priznak;	// признак "в работе"
 };
 
 struct cs		// структура компрессорной станции
 {
 	string name;	// имя станции
-	int quantity, work, effect;	// количество цехов, количество цехов в работе, эффективность
+	int quantity, work;	// количество цехов, количество цехов в работе
+	double effect; // эффективность
 };
 
-pipe InputPipe(bool& savepipe)
+void InputCheckInt(int& numb)
+{
+	while (true)
+	{
+		cin >> numb;
+		if (cin.fail() || numb < 0)
+		{
+			cout << " Неправильный ввод, попробуйте еще раз" << endl;
+			cin.clear();
+			cin.ignore(1000, '\n');
+			continue;
+		}
+		return;
+	}
+}
+	
+void InputCheckDouble(double& num)
+{
+	while (true)
+	{
+		cin >> num;
+		if (cin.fail() || num < 1)
+		{
+			cout << " Неправильный ввод, попробуйте еще раз" << endl;
+			cin.clear();
+			cin.ignore(1000, '\n');
+			continue;
+		}
+		return;
+	}
+}
+	
+void InputCheckBool(bool& n)
+{
+	while (true)
+	{
+		cin >> n;
+		if (cin.fail())
+		{
+			cout << " Неправильный ввод, попробуйте еще раз" << endl;
+			cin.clear();
+			cin.ignore(1000, '\n');
+			continue;
+		}
+		return;
+	}
+}
+
+pipe InputPipe(double& num, bool& savepipe)
 {
 	pipe p;
 	cout << " Введите длину новой трубы:";
-	while (true)
-	{
-		cin >> p.length;
-		if 
-			(cin.fail() || (p.length <= 0)) 
-		{
-			cout << " Неправильный ввод длины трубы, попробуйте еще раз" << endl;
-			cin.clear();
-			cin.ignore(1000, '\n');
-			continue;
-		}
-		else
-			break;
-	}
+	InputCheckDouble(num);
+	p.length = num;
 	cout << " Введите диаметр новой трубы:";
-	while (true)
-	{
-		cin >> p.diameter;
-		if (cin.fail() ||(p.diameter == 0) || (p.diameter < 0))
-		{
-			cout << "Неправильный ввод, попробуйте еще раз" << endl;
-			cin.clear();
-			cin.ignore(1000, '\n');
-			continue;
-		}
-		else
-			break;
-	}
-	p.priznak = 0;
+	InputCheckDouble(num);
+	p.diameter = num;
+	p.priznak = false;
 	savepipe = false;
 	return p;
 }
@@ -76,7 +102,7 @@ void PrintPipe(pipe p)
 	}
 }
 
-cs InputCs(bool& savecs)
+cs InputCs(int& numb, bool& savecs)
 {
 	cs s;
 	cout << " Введите название для новой компрессорной станции: ";
@@ -84,52 +110,32 @@ cs InputCs(bool& savecs)
 	cin.clear();
 	getline(cin, s.name);
 	cout << " Введите количество цехов новой компрессорной станции: ";
-	while (true)
+	InputCheckInt(numb);
+	s.quantity = numb;
+	while (1)
 	{
-		cin >> s.quantity;
-		if (cin.fail() || (s.quantity) < 1)
+		if (s.quantity == 0)
 		{
-			cout << "Неправильный ввод, попробуйте еще раз" << endl;
-			cin.clear();
-			cin.ignore(1000, '\n');
-			continue;
+			cout << "Количество цехов не может быть равным 0, попробуйте еще раз" << endl;
+			InputCheckInt(numb);
+			s.quantity = numb;
 		}
-		else
-			break;
+		else break;
 	}
 	cout << " Введите количество цехов в работе: ";
-	while (true)
-	{
-		cin >> s.work;
-		if (cin.fail() || (s.work < 0))
-		{
-			cout << "Неправильный ввод, попробуйте еще раз" << endl;
-			cin.clear();
-			cin.ignore(1000, '\n');
-			continue;
-		}
+	InputCheckInt(numb);
+	s.work = numb;
+	while (true) {
 		if (s.work > s.quantity)
 		{
-			cout << " Введенное количество цехов в работе превышает количество всех цехов, введите новое значение: ";
-			cin >> s.work;
+			cout << " Количество работающих цехов не может превышать количество всех цехов, попробуйте еще раз " << endl;
+			InputCheckInt(numb);
+			s.work = numb;
 		}
 		else
 			break;
 	}
-	cout << " Введите эффективность новой компрессорной станции: ";
-	while (true)
-	{
-		cin >> s.effect;
-		if (cin.fail() ||(s.effect) < 0)
-		{
-			cout << " Вы ввели неправильную эффективность, попробуйте еще раз";
-			cin.clear();
-			cin.ignore(1000, '\n');
-			continue;
-		}
-		else
-			break;
-	}
+	s.effect = (static_cast<double>(s.work) / s.quantity) * 100;
 	savecs = false;
 	return s;
 }
@@ -141,43 +147,38 @@ void PrintCs(cs s)
 		cout << "Компрессорная станция не введена" << endl;
 	}
 	else {
-		cout << "Характеристики компрессорной станции:" << endl;
+		cout << " Характеристики компрессорной станции:" << endl;
 		cout << " Название:" << s.name << endl;
 		cout << " Количество цехов всего:" << s.quantity << endl;
 		cout << " Количество цехов в работе:" << s.work << endl;
-		cout << " Эффективность:" << s.effect << "\n" << endl;
+		cout << " Эффективность:" << s.effect << "%" << "\n" << endl;
 	}
 }
 
 void EditPipe(pipe& p, bool& savepipe)
 {
-	int e;
+	bool e;
 	if ((p.length == 0) || (p.diameter == 0))
 	{
-		cout << "Вы не ввели трубу, попробуйте еще раз" << endl;
+		cout << " Вы не ввели трубу, попробуйте еще раз" << endl;
 	}
 	else
 	{
-		cout << "Для редактирования признака трубы нажмите 1 или 0 (< 1 в ремонте >,< 0 не в ремонте>)" << endl;
-		while (true)
+		cout << " Для редактирования признака трубы нажмите 1 или 0 (< 1 в ремонте >,< 0 не в ремонте>)" << endl;
+		InputCheckBool(e);
+		if (e == true)
 		{
-			cin >> e;
-			if ((e > 1) || (e < 0) || cin.fail())
-			{
-				cout << "Вы ввели неправильное значение, попробуйте еще раз" << endl;
-				cin.clear();
-				cin.ignore(1000, '\n');
-				continue;
-			}
-			else
-				break;
+			p.priznak = 1;
 		}
-		p.priznak = e;
-		savepipe = false;
+		if (e == false)
+		{
+			p.priznak = 0;
+		}
 	}
+	savepipe = false;
 }
 
-void EditCs(cs& s, bool savecs)
+void EditCs(cs& s, bool& savecs)
 {
 	int l;
 	if (s.quantity == 0)
@@ -188,19 +189,7 @@ void EditCs(cs& s, bool savecs)
 		cout << "Для редактирования параметра остановки или запуска цеха, выберите соответствующий пункт цифрой: " << endl;
 		cout << "1. Запуск цеха" << endl;
 		cout << "2. Остановка цеха" << endl;
-		while (true)
-		{
-			cin >> l;
-			if ((l > 2) || (l < 1) || cin.fail())
-			{
-				cout << "Вы выбрали неправильный пункт, попробуйте еще раз" << endl;
-				cin.clear();
-				cin.ignore(1000, '\n');
-				continue;
-			}
-			else 
-				break;
-		}
+		InputCheckInt(l);
 		if (l == 1)
 		{
 			if (s.work == s.quantity)
@@ -210,6 +199,7 @@ void EditCs(cs& s, bool savecs)
 			else
 			{
 				s.work += 1;
+				cout << "Цех запущен" << endl;
 			}
 		}
 		if (l == 2)
@@ -221,13 +211,15 @@ void EditCs(cs& s, bool savecs)
 			else
 			{
 				s.work -= 1;
+				cout << "Цех остановлен" << endl;
 			}
 		}
-		savecs = false;
+	
 	}
+	savecs = false;
 }
 
-void SaveObj(const pipe& p, const cs& s, bool& savepipe, bool& savecs)
+void SaveObj(const pipe& p, const cs& s, bool& savepipe, bool& savecs) 
 {
 	ofstream fout_pipe_cs;
 	fout_pipe_cs.open("Out_pipe_cs.txt", ios::out);
@@ -275,53 +267,64 @@ void menu()// меню
 
 int main()  // тело программы
 {
-	int value, danet ;
+	int value, danet, numb;
 	pipe tb{};
 	cs kc{};
 	bool savepipe = true, savecs = true;
+	double num;
 	menu();
 	while (true)
 	{
 		cout << "Выберите пункт меню: ";
-		cin >> value;
-		if ((cin.fail() || (value > 7) || (value < 0)))
-		{	
-			cout << "Неправильный ввод, попробуйте еще раз" << endl;
-			cin.clear();
-			cin.ignore(1000, '\n');
-			continue;
+		InputCheckInt(value);
+		if (value > 8 || value < 0)
+		{
+			cout << "Вы выбрали неправильный пункт, попробуйте еще раз " << endl;
 		}
 			switch (value)
 			{
 				case 0:
-				{
-					if (!savepipe || !savecs)
+				{ 
+					while (1)
 					{
-						cout << "Параметры не были сохранены, сохранить их?" << endl;
-						cout << "1.Да" << endl;
-						cout << "2.Нет" << endl;
-						cin >> danet;
-						if (danet == 1)
+						if (!savepipe || !savecs)
 						{
-							SaveObj(tb, kc, savepipe, savecs);
-							break;
+							cout << "Параметры не были сохранены, сохранить их?" << endl;
+							cout << "1.Да" << endl;
+							cout << "2.Нет" << endl;
+							while (true) {
+								InputCheckInt(danet);
+								if (danet < 1 || danet > 2)
+								{
+									cout << "Вы ввели неправильый пункт, попробуйте еще раз" << endl;
+								}
+								else
+									if (danet == 1)
+									{
+										SaveObj(tb, kc, savepipe, savecs);
+										cout << "Сохранение выполнено." << endl;
+										break;
+									}
+									else if (danet == 2)
+									{
+										exit(0);
+									}
+							}
 						}
-						if (danet == 2)
-						{
-							exit(0);
-						}
-					} else 
-					exit(0);
+						else break;
+					}
+					
+						exit(0);
 				}
 				case 1:
 				{
-					tb = InputPipe(savepipe);
+					tb = InputPipe(num,savepipe);
 					break;
 				}
 
 				case 2:
 				{
-					kc = InputCs(savecs);
+					kc = InputCs(numb,savecs);
 					break;
 				}
 
@@ -334,12 +337,12 @@ int main()  // тело программы
 
 				case 4:
 				{
-					EditPipe(tb, savepipe);
+					EditPipe(tb,savepipe);
 					break;
 				}
 				case 5:
 				{
-					EditCs(kc, savecs);
+					EditCs(kc,savecs);
 					break;
 				}
 				case 6:
