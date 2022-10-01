@@ -66,7 +66,7 @@ void InputCheckBool(bool& n)
 	}
 }
 
-pipe InputPipe(double& num, bool& savepipe)
+pipe InputPipe(double& num)
 {
 	pipe p;
 	cout << " Введите длину новой трубы:";
@@ -76,11 +76,10 @@ pipe InputPipe(double& num, bool& savepipe)
 	InputCheckDouble(num);
 	p.diameter = num;
 	p.priznak = false;
-	savepipe = false;
 	return p;
 }
 
-void PrintPipe(pipe p)
+void PrintPipe(pipe& p)
 {
 	if ((p.length == 0) || (p.diameter == 0))
 	{
@@ -102,7 +101,7 @@ void PrintPipe(pipe p)
 	}
 }
 
-cs InputCs(int& numb, bool& savecs)
+cs InputCs(int& numb)
 {
 	cs s;
 	cout << " Введите название для новой компрессорной станции: ";
@@ -136,11 +135,10 @@ cs InputCs(int& numb, bool& savecs)
 			break;
 	}
 	s.effect = (static_cast<double>(s.work) / s.quantity) * 100;
-	savecs = false;
 	return s;
 }
 
-void PrintCs(cs s)
+void PrintCs(cs& s)
 {
 	if (s.quantity == 0) 
 	{
@@ -155,7 +153,7 @@ void PrintCs(cs s)
 	}
 }
 
-void EditPipe(pipe& p, bool& savepipe)
+void EditPipe(pipe& p)
 {
 	bool e;
 	if ((p.length == 0) || (p.diameter == 0))
@@ -175,10 +173,9 @@ void EditPipe(pipe& p, bool& savepipe)
 			p.priznak = 0;
 		}
 	}
-	savepipe = false;
 }
 
-void EditCs(cs& s, bool& savecs)
+void EditCs(cs& s)
 {
 	int l;
 	if (s.quantity == 0)
@@ -199,6 +196,7 @@ void EditCs(cs& s, bool& savecs)
 			else
 			{
 				s.work += 1;
+				s.effect = (static_cast<double>(s.work) / s.quantity) * 100;
 				cout << "Цех запущен" << endl;
 			}
 		}
@@ -211,23 +209,21 @@ void EditCs(cs& s, bool& savecs)
 			else
 			{
 				s.work -= 1;
+				s.effect = (static_cast<double>(s.work) / s.quantity) * 100;
 				cout << "Цех остановлен" << endl;
 			}
 		}
 	
 	}
-	savecs = false;
 }
 
-void SaveObj(const pipe& p, const cs& s, bool& savepipe, bool& savecs) 
+void SaveObj(const pipe& p, const cs& s) 
 {
 	ofstream fout_pipe_cs;
 	fout_pipe_cs.open("Out_pipe_cs.txt", ios::out);
 	fout_pipe_cs << p.length << "\n" << p.diameter << "\n" << p.priznak << "\n";
 	fout_pipe_cs << s.name << "\n" << s.quantity << "\n" << s.work << "\n" << s.effect << "\n" << endl;
 	fout_pipe_cs.close();
-	savepipe = true;
-	savecs = true;
 }
 
 void LoadObj(pipe& p, cs& s)
@@ -243,7 +239,8 @@ void LoadObj(pipe& p, cs& s)
 		fin_pipe_cs >> p.length;
 		fin_pipe_cs >> p.diameter;
 		fin_pipe_cs >> p.priznak;
-		fin_pipe_cs >> s.name;
+		fin_pipe_cs.ignore();
+		getline(fin_pipe_cs, s.name);
 		fin_pipe_cs >> s.quantity;
 		fin_pipe_cs >> s.work;
 		fin_pipe_cs >> s.effect;
@@ -283,48 +280,51 @@ int main()  // тело программы
 		}
 			switch (value)
 			{
-				case 0:
-				{ 
-					while (1)
+			case 0:
+			{
+				while (1)
+				{
+					if (!savepipe || !savecs)
 					{
-						if (!savepipe || !savecs)
-						{
-							cout << "Параметры не были сохранены, сохранить их?" << endl;
-							cout << "1.Да" << endl;
-							cout << "2.Нет" << endl;
-							while (true) {
-								InputCheckInt(danet);
-								if (danet < 1 || danet > 2)
-								{
-									cout << "Вы ввели неправильый пункт, попробуйте еще раз" << endl;
-								}
-								else
-									if (danet == 1)
-									{
-										SaveObj(tb, kc, savepipe, savecs);
-										cout << "Сохранение выполнено." << endl;
-										break;
-									}
-									else if (danet == 2)
-									{
-										exit(0);
-									}
+						cout << "Параметры не были сохранены, сохранить их?" << endl;
+						cout << "1.Да" << endl;
+						cout << "2.Нет" << endl;
+						while (true) {
+							InputCheckInt(danet);
+							if (danet < 1 || danet > 2)
+							{
+								cout << "Вы ввели неправильный пункт, попробуйте еще раз" << endl;
+							}
+
+							if (danet == 1)
+							{
+								SaveObj(tb, kc); //savepipe, savecs);
+								cout << "Сохранение выполнено." << endl;
+								savepipe = true;
+								savecs = true;
+								break;
+							}
+							if (danet == 2)
+							{
+								exit(0);
 							}
 						}
-						else break;
 					}
-					
+					else
 						exit(0);
 				}
+			}
 				case 1:
 				{
-					tb = InputPipe(num,savepipe);
+					tb = InputPipe(num);
+					savepipe = false;
 					break;
 				}
 
 				case 2:
 				{
-					kc = InputCs(numb,savecs);
+					kc = InputCs(numb);
+					savecs = false;
 					break;
 				}
 
@@ -337,24 +337,29 @@ int main()  // тело программы
 
 				case 4:
 				{
-					EditPipe(tb,savepipe);
+					EditPipe(tb);
+					savepipe = false;
 					break;
 				}
 				case 5:
 				{
-					EditCs(kc,savecs);
+					EditCs(kc);
+					savecs = false;
 					break;
 				}
 				case 6:
 				{
-					SaveObj(tb, kc, savepipe, savecs);
+					SaveObj(tb, kc);
 					cout << "Сохранение выполнено." << endl;
+					savepipe = true;
+					savecs = true;
 					break;
 				}
 				case 7:
 				{				
 					LoadObj(tb,kc);
 				}
+				
 			}
 	}
 }
