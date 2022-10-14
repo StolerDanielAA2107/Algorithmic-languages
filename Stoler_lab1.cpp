@@ -7,77 +7,42 @@ using namespace std;
 
 struct pipe		//структура труба
 {
-	double length, diameter;	// длина, диаметр
+	double length = 0, diameter = 0;	// длина, диаметр
 	bool priznak;	// признак "в работе"
 };
 
 struct cs		// структура компрессорной станции
 {
 	string name;	// имя станции
-	int quantity, work;	// количество цехов, количество цехов в работе
+	int quantity = 0;	// количество цехов, количество цехов в работе
+	int work;
 	double effect; // эффективность
 };
 
-void InputCheckInt(int& numb)
+template <typename T>
+
+T InputCheck(T min, T max)
 {
-	while (true)
+	T x{};
+	while ((cin >> x).fail() || (x <= min) || (x > max))
 	{
-		cin >> numb;
-		if (cin.fail() || numb < 0)
-		{
-			cout << " Неправильный ввод, попробуйте еще раз" << endl;
-			cin.clear();
-			cin.ignore(1000, '\n');
-			continue;
-		}
-		return;
+		cin.clear();
+		cin.ignore(10000, '\n');
 	}
-}
-	
-void InputCheckDouble(double& num)
-{
-	while (true)
-	{
-		cin >> num;
-		if (cin.fail() || num <= 0)
-		{
-			cout << " Неправильный ввод, попробуйте еще раз" << endl;
-			cin.clear();
-			cin.ignore(1000, '\n');
-			continue;
-		}
-		return;
-	}
-}
-	
-void InputCheckBool(bool& n)
-{
-	while (true)
-	{
-		cin >> n;
-		if (cin.fail())
-		{
-			cout << " Неправильный ввод, попробуйте еще раз" << endl;
-			cin.clear();
-			cin.ignore(1000, '\n');
-			continue;
-		}
-		return;
-	}
+	return x;
 }
 
-pipe InputPipe()
+istream& operator >> (istream& in, pipe& p) // Ввод трубы
 {
-	pipe p;
-	cout << " Введите длину новой трубы:";
-	InputCheckDouble(p.length);
-	cout << " Введите диаметр новой трубы:";
-	InputCheckDouble(p.diameter);
+	cout << "Введите длину трубы: " << endl;
+	p.length = InputCheck(0.0,2000000000000000000.0);
+	cout << "Введите диаметр трубы: " << endl;
+	p.diameter = InputCheck(0.0, 2000000000000000000.0);
 	p.priznak = false;
-	return p;
+	return in;
 }
 
-void PrintPipe(pipe& p)
+ostream& operator << (ostream& out, const pipe& p) // Печать трубы
 {
 	if ((p.length == 0) || (p.diameter == 0))
 	{
@@ -97,52 +62,53 @@ void PrintPipe(pipe& p)
 			cout << " Признак: не в ремонте" << "\n" << endl;
 		}
 	}
+	return out;
 }
 
-cs InputCs()
+istream& operator >> (istream& in, cs& s) // Ввод трубы
 {
-	cs s;
-	cout << " Введите название для новой компрессорной станции: ";
+	cout << "Введите имя компрессорной станции: " << endl;
 	cin.ignore(1000, '\n');
 	cin.clear();
 	getline(cin, s.name);
-	cout << " Введите количество цехов новой компрессорной станции: ";
-	InputCheckInt(s.quantity);
-	while (1)
-	{
-		if (s.quantity == 0)
-		{
-			cout << "Количество цехов не может быть равным 0, попробуйте еще раз" << endl;
-			InputCheckInt(s.quantity);
-		}
-		else break;
-	}
-	cout << " Введите количество цехов в работе: ";
-	InputCheckInt(s.work);
-	while (1) {
-		if (s.work > s.quantity)
-		{
-			cout << " Количество работающих цехов не может превышать количество всех цехов, попробуйте еще раз " << endl;
-			InputCheckInt(s.work);
-		}
-		else break;
-	}
-	s.effect = (static_cast<double>(s.work) / s.quantity) * 100;
-	return s;
+	cout << "Введите количество цехов: " << endl;
+	s.quantity = InputCheck(0, 2147483647);
+	cout << "Введите количество работающих цехов: " << endl;
+	s.work = InputCheck(0, s.quantity);
+	cout << "Введите эффективность: " << endl;
+	s.effect = InputCheck(0.0, 2000000000000000000.0);
+	return in;
 }
-
-void PrintCs(cs& s)
+	
+ostream& operator << (ostream& out, const cs& s) // Печать компрессорной станции
 {
-	if (s.quantity == 0) 
+	if (s.quantity == 0)
 	{
-		cout << "Компрессорная станция не введена" << endl;
+		cout << "Компрессорная станция не введена" << "\n" << endl;
 	}
 	else {
 		cout << " Характеристики компрессорной станции:" << endl;
 		cout << " Название:" << s.name << endl;
 		cout << " Количество цехов всего:" << s.quantity << endl;
 		cout << " Количество цехов в работе:" << s.work << endl;
-		cout << " Эффективность:" << s.effect << "%" << "\n" << endl;
+		cout << " Эффективность:" << s.effect  << "\n" << endl;
+	}
+	return out;
+}
+
+void InputCheckBool(bool& n)
+{
+	while (true)
+	{
+		cin >> n;
+		if (cin.fail())
+		{
+			cout << " Неправильный ввод, попробуйте еще раз" << endl;
+			cin.clear();
+			cin.ignore(1000, '\n');
+			continue;
+		}
+		return;
 	}
 }
 
@@ -179,7 +145,7 @@ void EditCs(cs& s)
 		cout << "Для редактирования параметра остановки или запуска цеха, выберите соответствующий пункт цифрой: " << endl;
 		cout << "1. Запуск цеха" << endl;
 		cout << "2. Остановка цеха" << endl;
-		InputCheckInt(edt_cs);
+		/*InputCheckInt(edt_cs);
 		if (edt_cs == 1)
 		{
 			if (s.work == s.quantity)
@@ -192,8 +158,8 @@ void EditCs(cs& s)
 				s.effect = (static_cast<double>(s.work) / s.quantity) * 100;
 				cout << "Цех запущен" << endl;
 			}
-		}
-		if (edt_cs == 2)
+		}*/
+		/*if (edt_cs == 2)
 		{
 			if (s.work == 0)
 			{
@@ -205,7 +171,7 @@ void EditCs(cs& s)
 				s.effect = (static_cast<double>(s.work) / s.quantity) * 100;
 				cout << "Цех остановлен" << endl;
 			}
-		}
+		}*/
 	
 	}
 }
@@ -258,6 +224,7 @@ void menu()// меню
 	cout << " 6. Сохранить в файл" << endl;
 	cout << " 7. Загрузить из файла" << endl;
 	cout << " 0. Выход" << "\n" << endl;
+	//cout << " Выберите пункт" << endl;
 }
 
 int main()  // тело программы
@@ -265,22 +232,18 @@ int main()  // тело программы
 	int value, danet, numb;
 	double num;
 	bool savepipe = true, savecs = true;
-	pipe tb{};
-	cs kc{};
+	pipe tb;
+	cs kc;
 	menu();
-	while (true)
+	while (1)
 	{
-		cout << "Выберите пункт меню: ";
-		InputCheckInt(value);
-		if (value > 8 || value < 0)
-		{
-			cout << "Вы выбрали неправильный пункт, попробуйте еще раз " << endl;
-		}
-			switch (value)
+		cout << " Выберите пункт:" << endl;
+			switch (InputCheck(0,7))
 			{
 				case 0:
 				{
-					while (1)
+					exit(0);
+					/*while (1)
 					{
 						if (!savepipe || !savecs)
 						{
@@ -308,35 +271,33 @@ int main()  // тело программы
 								}
 							}
 						}
-						else
-							exit(0);
-					}
+						else*/
 				}
 
 				case 1:
 				{
-					tb = InputPipe();
+					cin >> tb;
 					savepipe = false;
 					break;
 				}
 
 				case 2:
 				{
-					kc = InputCs();
+					cin >> kc;
 					savecs = false;
 					break;
 				}
 
 				case 3:
 				{
-					PrintPipe(tb);
-					PrintCs(kc);
+					cout << tb;
+					cout << kc;
 					break;
 				}
 
 				case 4:
 				{
-					EditPipe(tb);
+					
 					savepipe = false;
 					break;
 				}
