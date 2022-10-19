@@ -2,16 +2,13 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include<unordered_map>
+#include "pipe.h"
+#include "utils.h"
 
 using namespace std;
 
-struct pipe		//структура труба
-{
-	double length = 0, diameter = 0;	// длина, диаметр
-	bool priznak;	// признак "в работе"
-};
-
-struct cs		// структура компрессорной станции
+struct cs		//класс компрессорной станции
 {
 	string name;	// имя станции
 	int quantity = 0;	// количество цехов, количество цехов в работе
@@ -24,7 +21,7 @@ template <typename T>
 T InputCheck(T min, T max)
 {
 	T x{};
-	while ((cin >> x).fail() || (x <= min) || (x > max))
+	while ((cin >> x).fail() || (x <= min) || (x >= max))
 	{
 		cin.clear();
 		cin.ignore(10000, '\n');
@@ -32,40 +29,7 @@ T InputCheck(T min, T max)
 	return x;
 }
 
-istream& operator >> (istream& in, pipe& p) // Ввод трубы
-{
-	cout << "Введите длину трубы: " << endl;
-	p.length = InputCheck(0.0,2000000000000000000.0);
-	cout << "Введите диаметр трубы: " << endl;
-	p.diameter = InputCheck(0.0, 2000000000000000000.0);
-	p.priznak = false;
-	return in;
-}
-
-ostream& operator << (ostream& out, const pipe& p) // Печать трубы
-{
-	if ((p.length == 0) || (p.diameter == 0))
-	{
-		cout << "Труба не введена" << endl;
-	}
-	else
-	{
-		cout << "Характеристики трубы:" << endl;
-		cout << " Длина:" << p.length << endl;
-		cout << " Диаметр:" << p.diameter << endl;
-		if (p.priznak == 1)
-		{
-			cout << " Признак: в ремонте" << "\n" << endl;
-		}
-		if (p.priznak == 0)
-		{
-			cout << " Признак: не в ремонте" << "\n" << endl;
-		}
-	}
-	return out;
-}
-
-istream& operator >> (istream& in, cs& s) // Ввод трубы
+istream& operator >> (istream& in, cs& s) // Ввод компрессорной станции
 {
 	cout << "Введите имя компрессорной станции: " << endl;
 	cin.ignore(1000, '\n');
@@ -96,42 +60,9 @@ ostream& operator << (ostream& out, const cs& s) // Печать компрес�
 	return out;
 }
 
-void InputCheckBool(bool& n)
-{
-	while (true)
-	{
-		cin >> n;
-		if (cin.fail())
-		{
-			cout << " Неправильный ввод, попробуйте еще раз" << endl;
-			cin.clear();
-			cin.ignore(1000, '\n');
-			continue;
-		}
-		return;
-	}
-}
-
 void EditPipe(pipe& p)
 {
-	bool edt_p;
-	if ((p.length == 0) || (p.diameter == 0))
-	{
-		cout << " Вы не ввели трубу, попробуйте еще раз" << endl;
-	}
-	else
-	{
-		cout << " Для редактирования признака трубы нажмите 1 или 0 (< 1 в ремонте >,< 0 не в ремонте>)" << endl;
-		InputCheckBool(edt_p);
-		if (edt_p == true)
-		{
-			p.priznak = 1;
-		}
-		if (edt_p == false)
-		{
-			p.priznak = 0;
-		}
-	}
+	p.EditPipe();
 }
 
 void EditCs(cs& s)
@@ -145,7 +76,7 @@ void EditCs(cs& s)
 		cout << "Для редактирования параметра остановки или запуска цеха, выберите соответствующий пункт цифрой: " << endl;
 		cout << "1. Запуск цеха" << endl;
 		cout << "2. Остановка цеха" << endl;
-		/*InputCheckInt(edt_cs);
+		edt_cs = InputCheck(0,3);
 		if (edt_cs == 1)
 		{
 			if (s.work == s.quantity)
@@ -155,11 +86,10 @@ void EditCs(cs& s)
 			else
 			{
 				s.work += 1;
-				s.effect = (static_cast<double>(s.work) / s.quantity) * 100;
 				cout << "Цех запущен" << endl;
 			}
-		}*/
-		/*if (edt_cs == 2)
+		}
+		if (edt_cs == 2)
 		{
 			if (s.work == 0)
 			{
@@ -168,10 +98,9 @@ void EditCs(cs& s)
 			else
 			{
 				s.work -= 1;
-				s.effect = (static_cast<double>(s.work) / s.quantity) * 100;
 				cout << "Цех остановлен" << endl;
 			}
-		}*/
+		}
 	
 	}
 }
@@ -180,8 +109,8 @@ void SaveObj(const pipe& p, const cs& s)
 {
 	ofstream fout_pipe_cs;
 	fout_pipe_cs.open("Out_pipe_cs.txt", ios::out);
-	fout_pipe_cs << p.length << "\n" << p.diameter << "\n" << p.priznak << "\n";
-	fout_pipe_cs << s.name << "\n" << s.quantity << "\n" << s.work << "\n" << endl;
+	//fout_pipe_cs << p.length << "\n" << p.diameter << "\n" << p.priznak << "\n";
+	fout_pipe_cs << s.name << "\n" << s.quantity << "\n" << s.work << "\n" << s.effect << endl;
 	fout_pipe_cs.close();
 }
 
@@ -207,7 +136,7 @@ void LoadObj(pipe& p, cs& s)
 			getline(fin_pipe_cs, s.name);
 			fin_pipe_cs >> s.quantity;
 			fin_pipe_cs >> s.work;
-			s.effect = ((static_cast<double>(s.work)) / s.quantity) * 100;;
+			fin_pipe_cs >> s.effect;
 			fin_pipe_cs.close();
 			cout << "Загрузка выполнена." << endl;
 		}
@@ -224,7 +153,6 @@ void menu()// меню
 	cout << " 6. Сохранить в файл" << endl;
 	cout << " 7. Загрузить из файла" << endl;
 	cout << " 0. Выход" << "\n" << endl;
-	//cout << " Выберите пункт" << endl;
 }
 
 int main()  // тело программы
@@ -233,93 +161,90 @@ int main()  // тело программы
 	double num;
 	bool savepipe = true, savecs = true;
 	pipe tb;
+	unordered_map <int, pipe> pipes ({});
 	cs kc;
+	int n = 5;
 	menu();
 	while (1)
 	{
 		cout << " Выберите пункт:" << endl;
-			switch (InputCheck(0,7))
+		switch (InputCheck(-1, 8))
+		{
+		case 0:
+		{
+			while (1)
 			{
-				case 0:
+				if (!savepipe || !savecs)
 				{
-					exit(0);
-					/*while (1)
-					{
-						if (!savepipe || !savecs)
+					cout << "Параметры не были сохранены, сохранить их?" << endl;
+					cout << "1.Да" << endl;
+					cout << "2.Нет" << endl;
+					while (true) {
+						danet = InputCheck(0, 3);
+						if (danet == 1)
 						{
-							cout << "Параметры не были сохранены, сохранить их?" << endl;
-							cout << "1.Да" << endl;
-							cout << "2.Нет" << endl;
-							while (true) {
-								InputCheckInt(danet);
-								if (danet < 1 || danet > 2)
-								{
-									cout << "Вы ввели неправильный пункт, попробуйте еще раз" << endl;
-								}
-
-								if (danet == 1)
-								{
-									SaveObj(tb, kc); 
-									cout << "Сохранение выполнено." << endl;
-									savepipe = true;
-									savecs = true;
-									break;
-								}
-								if (danet == 2)
-								{
-									exit(0);
-								}
-							}
+							SaveObj(tb, kc);
+							cout << "Сохранение выполнено." << endl;
+							savepipe = true;
+							savecs = true;
+							break;
 						}
-						else*/
+						if (danet == 2)
+						{
+							exit(0);
+						}
+					}
 				}
-
-				case 1:
-				{
-					cin >> tb;
-					savepipe = false;
-					break;
-				}
-
-				case 2:
-				{
-					cin >> kc;
-					savecs = false;
-					break;
-				}
-
-				case 3:
-				{
-					cout << tb;
-					cout << kc;
-					break;
-				}
-
-				case 4:
-				{
-					
-					savepipe = false;
-					break;
-				}
-				case 5:
-				{
-					EditCs(kc);
-					savecs = false;
-					break;
-				}
-				case 6:
-				{
-					SaveObj(tb, kc);
-					cout << "Сохранение выполнено." << endl;
-					savepipe = true;
-					savecs = true;
-					break;
-				}
-				case 7:
-				{				
-					LoadObj(tb,kc);
-				}
-				
+				else exit(0);
 			}
+
+		case 1:
+		{
+			cin >> tb;
+			//pipes.insert(tb);
+			savepipe = false;
+			break;			
+		case 2:
+		{
+			cin >> kc;
+			savecs = false;
+			break;
+		}
+
+		case 3:
+		{
+			cout << tb;
+			cout << kc;
+			break;
+		}
+
+		case 4:
+		{
+			EditPipe(tb);
+			savepipe = false;
+			break;
+		}
+		case 5:
+		{
+			EditCs(kc);
+			savecs = false;
+			break;
+		}
+		case 6:
+		{
+			SaveObj(tb, kc);
+			cout << "Сохранение выполнено." << endl;
+			savepipe = true;
+			savecs = true;
+			break;
+		}
+		case 7:
+		{
+			LoadObj(tb, kc);
+		}
+
+		}
+		}
+		}
 	}
 }
