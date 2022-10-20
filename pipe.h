@@ -1,24 +1,19 @@
 #pragma once
-#include <iostream>
-#include "Utils.h"  
+#include <iostream> 
 
 class pipe
 {
-	double length, diameter;	// длина, диаметр
-	bool priznak;	// признак "в работе"
+private:
+	//int id_p = 1; // идентификатор трубы
+	double length {0.0}, diameter {0.0};	// длина, диаметр
 
 public:
-	/*pipe();
-	pipe(double length);
-	pipe(double diameter);
-	pipe(bool priznak);
-	pipe(const pipe& p);*/
-	double GetLength() const;
-	double GetDiameter() const;
-	void SetLength(double);
-	void SetDiameter(double);
-	void SetPriznak(bool);
-	void EditPipe();
+	pipe() {};
+	bool priznak{ 0 };	// признак "в работе"
+	//UniqueID();
+	void EditPipe(pipe& p);
+	pipe(double length, double diameter, bool priznak);
+
 	friend std::istream& operator >> (std::istream& in, pipe& p); // Ввод трубы
 	friend std::ostream& operator << (std::ostream& in, pipe& p); // Вывод трубы
 

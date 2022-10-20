@@ -21,6 +21,9 @@
     <ClCompile Include="pipe.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="cs.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pipe.h">
@@ -28,6 +31,9 @@
     </ClInclude>
     <ClInclude Include="Utils.h">
       <Filter>Исходные файлы</Filter>
+    </ClInclude>
+    <ClInclude Include="cs.h">
+      <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

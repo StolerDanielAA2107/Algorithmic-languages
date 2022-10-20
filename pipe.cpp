@@ -1,18 +1,12 @@
 #include "pipe.h"
+#include"Utils.h"
+
 using namespace std;
 
-//pipe::pipe()
+//void pipe::UniqueID(int id_p)
 //{
-//	length = 0;
-//	diameter = 0;
-//	priznak = 0;
+//	id_p = ++nextID;
 //}
-
-double pipe::GetLength() const
-{
-	return length;
-}
-
 
 void pipe::EditPipe(pipe& p)
 {
@@ -36,40 +30,44 @@ void pipe::EditPipe(pipe& p)
 	}
 }
 
-double pipe::GetDiameter() const
+pipe::pipe(double length, double diameter, bool priznak)
 {
-	return diameter;
+	//this->id_p = id_p;
+	this->length = length;
+	this->diameter = diameter;
+	this->priznak = priznak;
 }
 
 istream& operator >> (istream& in, pipe& p) // Ввод трубы
 {
 	cout << "Введите длину трубы: " << endl;
-	p.length = InputCheck(0.0, 2000000000000000000.0);
+	p.length = InputCheck(0.0, DBL_MAX);
 	cout << "Введите диаметр трубы: " << endl;
-	p.diameter = InputCheck(0.0, 2000000000000000000.0);
+	p.diameter = InputCheck(0.0, DBL_MAX);
 	p.priznak = false;
 	return in;
 }
 
-ostream& operator << (ostream& out, const pipe& p) // Печать трубы
+ostream& operator << (ostream& out,  pipe& p) // Печать трубы
 {
-	if ((p.GetLength() == 0) || (p.GetDiameter() == 0))
+	if ((p.length == 0) || (p.diameter == 0))
 	{
 		cout << "Труба не введена" << endl;
 	}
 	else
 	{
 		cout << "Характеристики трубы:" << endl;
-		cout << " Длина:" << p.GetLength() << endl;
-		cout << " Диаметр:" << p.GetDiameter << endl;
-		/*if (p.priznak == 1)
+		cout << " Длина:" << p.length << endl;
+		cout << " Диаметр:" << p.diameter << endl;
+		if (p.priznak == 1)
 		{
 			cout << " Признак: в ремонте" << "\n" << endl;
 		}
 		if (p.priznak == 0)
 		{
 			cout << " Признак: не в ремонте" << "\n" << endl;
-		}*/
+		}
 	}
 	return out;
 }
+
