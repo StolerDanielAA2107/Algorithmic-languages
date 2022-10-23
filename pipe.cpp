@@ -1,41 +1,47 @@
 #include "pipe.h"
-#include"Utils.h"
+#include "Utils.h"
+#include <fstream>
+#include <sstream>
+
+int pipe::MaxID = 1;
 
 using namespace std;
 
-//void pipe::UniqueID(int id_p)
-//{
-//	id_p = ++nextID;
-//}
+pipe::pipe()
+{
+	id = MaxID;
+	length = 0.0;
+	diameter = 0.0;
+	priznak = 0;
+}
 
-void pipe::EditPipe(pipe& p)
+void pipe::EditPipe()
 {
 	bool edt_p;
-	if ((p.length == 0) || (p.diameter == 0))
-	{
-		cout << " Вы не ввели трубу, попробуйте еще раз" << endl;
-	}
-	else
-	{
+
 		cout << " Для редактирования признака трубы нажмите 1 или 0 (< 1 в ремонте >,< 0 не в ремонте>)" << endl;
-		edt_p = InputCheck(-1, 2);
+		edt_p = (bool)InputCheck(0, 1);
 		if (edt_p == true)
 		{
-			p.priznak = 1;
+			priznak = true;
 		}
 		if (edt_p == false)
 		{
-			p.priznak = 0;
+			priznak = false;
 		}
-	}
+		cout << "Параметр изменен" << endl;
 }
 
-pipe::pipe(double length, double diameter, bool priznak)
+void SavePipe(ofstream& fout, const pipe& p)
 {
-	//this->id_p = id_p;
-	this->length = length;
-	this->diameter = diameter;
-	this->priznak = priznak;
+	fout << p.id << "\n" << p.length << "\n" << p.diameter << "\n" << p.priznak << endl;
+}
+
+pipe LoadPipe(ifstream& fin)
+{
+	pipe p;
+	fin >> p.length;  fin >> p.diameter; fin >> p.priznak;
+	return p;
 }
 
 istream& operator >> (istream& in, pipe& p) // Ввод трубы
@@ -48,7 +54,7 @@ istream& operator >> (istream& in, pipe& p) // Ввод трубы
 	return in;
 }
 
-ostream& operator << (ostream& out,  pipe& p) // Печать трубы
+ostream& operator << (ostream& out, const pipe& p) // Печать трубы
 {
 	if ((p.length == 0) || (p.diameter == 0))
 	{
@@ -56,7 +62,6 @@ ostream& operator << (ostream& out,  pipe& p) // Печать трубы
 	}
 	else
 	{
-		cout << "Характеристики трубы:" << endl;
 		cout << " Длина:" << p.length << endl;
 		cout << " Диаметр:" << p.diameter << endl;
 		if (p.priznak == 1)
@@ -70,4 +75,5 @@ ostream& operator << (ostream& out,  pipe& p) // Печать трубы
 	}
 	return out;
 }
+
 

@@ -10,6 +10,7 @@ T InputCheck(T min, T max)
 	{
 		std::cin.clear();
 		std::cin.ignore(10000, '\n');
+		std::cout << "попробуйте еще раз" << std::endl;
 	}
 	return x;
 }

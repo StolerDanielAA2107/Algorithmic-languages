@@ -3,19 +3,17 @@
 
 class pipe
 {
-private:
-	//int id_p = 1; // идентификатор трубы
-	double length {0.0}, diameter {0.0};	// длина, диаметр
-
 public:
-	pipe() {};
-	bool priznak{ 0 };	// признак "в работе"
-	//UniqueID();
-	void EditPipe(pipe& p);
-	pipe(double length, double diameter, bool priznak);
-
+	int id;
+	static int MaxID;
+	double length;	// длина
+	double diameter; // диаметр
+	bool priznak;	// признак "в работе"
+	pipe();		
+	void EditPipe();
+	friend void SavePipe(std::ofstream& fout, const pipe& p);
+	friend pipe LoadPipe(std::ifstream& fin);
 	friend std::istream& operator >> (std::istream& in, pipe& p); // Ввод трубы
-	friend std::ostream& operator << (std::ostream& in, pipe& p); // Вывод трубы
-
+	friend std::ostream& operator << (std::ostream& in, const pipe& p); // Вывод трубы
 };
 
