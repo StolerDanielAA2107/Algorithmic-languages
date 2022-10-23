@@ -57,8 +57,6 @@ void cs::EditCs()
 
 }
 
-
-
 istream& operator >> (istream& in, cs& s) // ¬вод компрессорной станции
 {
 	cout << "¬ведите им€ компрессорной станции: " << endl;

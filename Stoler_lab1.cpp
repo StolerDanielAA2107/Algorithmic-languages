@@ -24,59 +24,6 @@ void menu()// меню
 	cout << " 0. Выход" << "\n" << endl;
 }
 
-bool FileExist(string name)
-{
-	bool isExist = false;
-	std::ifstream fin(name.c_str());
-
-	if (fin.is_open())
-		isExist = true;
-
-	fin.close();
-	return isExist;
-}
-istream& inStr(istream& in, string& s)
-{
-	size_t l;
-	in.read((char*)&l, sizeof(l));
-	s = string(l, ' ');
-	in.read(s.data(), l);
-	return in;
-}
-void file2map(istream& in_file, unordered_map<string, string>& m)
-{
-	ifstream ifile;
-	string name;
-	cout << "Введите название файла из которого загрузить данные" << endl;
-	cin.ignore(1000, '\n');
-	cin.clear();
-	getline(cin, name);
-	ifile.open(name, ios::in);
-	if (ifile.is_open() == 0)
-	{
-		cout << "Ошибка открытия файла" << endl;
-	}
-	else
-		if (ifile.peek() == EOF)
-		{
-			cout << "Ошибка чтения: нет данных в файле" << endl;
-		}
-		else
-			if (ifile.is_open())
-			{
-				size_t l;
-				in_file.read((char*)&l, sizeof(l));
-				for (int i = 0; i < l; ++i)
-				{
-					int key;
-					inStr(in_file, key);
-					inStr(in_file, m[key]);
-				}
-				
-				cout << "Загрузка выполнена." << endl;
-			}
-	ifile.close();
-}
 int main()  // тело программы
 {
 	int danet;
@@ -119,7 +66,7 @@ int main()  // тело программы
 		}
 		case 1: //ввод трубы и запись в контейнер
 		{
-			pipe tb = pipe();
+			pipe tb = pipe(); 
 			cin >> tb;
 			pipes.insert({ tb.id, tb });
 			++pipe::MaxID;
@@ -202,10 +149,34 @@ int main()  // тело программы
 			savecs = false;
 			break;
 		}
-		/*case 6:
+		case 6:
 		{
+			pipe tb;
+			int ob;
+			if (pipes.size() == 0 && css.size() == 0)
+			{
+				cout << "Объекты не добавлены" << endl;
+				break;
+			}
 
-		}*/
+			cout << "Введите по какому объекту сделать поиск:" << endl;
+			cout << "1. Труба" << endl;
+			cout << "2. Компрессорная станция" << endl;
+			ob = InputCheck(1, 2);
+
+			for (const auto& tb : pipes) 
+			{
+			if (ob == 1)
+			{
+					if (tb.second.priznak == 1)
+					{
+						cout << "id трубы с признаком <в ремонте>:" << tb.first << endl;
+						
+					}
+				}
+			}
+			break;
+		}
 		case 7:
 		{
 			ofstream ofile;
@@ -230,15 +201,53 @@ int main()  // тело программы
 
 
 		}
-		case 8:
+		/*case 8:
 		{
-			ifstream in("data", ios::binary);
-			file2map(in, tb);
 
-			for (auto& s : p) cout << s.first << "  " << s.second << endl;
+		}*/
+		case 9:
+		{
+			int elem;
+			if (pipes.size() == 0 && css.size() == 0)
+			{
+				cout << "Объекты не добавлены" << endl;
+				break;
+			}
+			cout << "Введите какой объект вы хотите удалить:" << endl;
+			cout << "1. Труба" << endl;
+			cout << "2. Компрессорная станция" << endl;
+			elem = InputCheck(1, 2);
+			if (elem == 1)
+			{
+				cout << "Введите id объекта:" << endl;
+				auto id = InputCheck(1, 10000);
+
+				if (id > pipes.size())
+				{
+					cout << "Трубы с данным идентификатором не существует" << endl;
+					break;
+				}
+				pipes.erase(id);
+				cout << "Объект удален" << endl;
+			}
+			
+			if (elem == 2)
+			{
+				cout << "Введите id объекта:" << endl;
+
+				auto id = InputCheck(1, 10000);
+
+				if (id > css.size())
+				{
+					cout << "Трубы с данным идентификатором не существует" << endl;
+					break;
+				}
+				css.erase(id);
+				cout << "Объект удален" << endl;
+			}
+
 		}
 		}
 	}
 }
-	
 
