@@ -21,6 +21,10 @@ void SaveCs(ofstream& fout, const cs& s)
 	fout << s.id << "\n" << s.name << "\n" << s.quantity << "\n" << s.work << "\n" << s.effect << endl;
 }
 
+void LoadCs(ifstream& fin, cs& s)
+{
+	fin >> s.id; fin.ignore(); getline(fin,s.name); fin >> s.quantity; fin >> s.work; fin >> s.effect;
+}
 void cs::EditCs()
 {
 	int edt_cs;

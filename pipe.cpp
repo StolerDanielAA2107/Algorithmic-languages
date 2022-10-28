@@ -20,7 +20,7 @@ void pipe::EditPipe()
 	bool edt_p;
 
 		cout << " Для редактирования признака трубы нажмите 1 или 0 (< 1 в ремонте >,< 0 не в ремонте>)" << endl;
-		edt_p = (bool)InputCheck(0, 1);
+		edt_p = InputCheck(0, 1);
 		if (edt_p == true)
 		{
 			priznak = true;
@@ -32,16 +32,14 @@ void pipe::EditPipe()
 		cout << "Параметр изменен" << endl;
 }
 
+void LoadPipe(ifstream& fin, pipe& p)
+{
+	fin >> p.id; fin >> p.length; fin >> p.diameter; fin >> p.priznak;
+}
+
 void SavePipe(ofstream& fout, const pipe& p)
 {
 	fout << p.id << "\n" << p.length << "\n" << p.diameter << "\n" << p.priznak << endl;
-}
-
-pipe LoadPipe(ifstream& fin)
-{
-	pipe p;
-	fin >> p.length;  fin >> p.diameter; fin >> p.priznak;
-	return p;
 }
 
 istream& operator >> (istream& in, pipe& p) // Ввод трубы
