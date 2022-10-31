@@ -6,10 +6,10 @@ class cs
 public:
 	int id;
 	static int MaxID;
-	std::string name;	// имя станции
-	int quantity;	// количество цехов
-	int work;		// количество цехов в работе
-	double effect; // эффективность
+	std::string name;
+	int quantity;	
+	int work;	
+	double effect; 
 	cs();
 	void EditCs();
 	friend void SaveCs(std::ofstream& fout, const cs& s);

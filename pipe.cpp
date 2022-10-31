@@ -1,7 +1,7 @@
-#include "pipe.h"
-#include "Utils.h"
 #include <fstream>
 #include <sstream>
+#include "pipe.h"
+#include "Utils.h"
 
 int pipe::MaxID = 1;
 
@@ -54,24 +54,19 @@ istream& operator >> (istream& in, pipe& p) // Ввод трубы
 
 ostream& operator << (ostream& out, const pipe& p) // Печать трубы
 {
-	if ((p.length == 0) || (p.diameter == 0))
+	cout << " Длина:" << p.length << endl;
+	cout << " Диаметр:" << p.diameter << endl;
+	if (p.priznak == 1)
 	{
-		cout << "Труба не введена" << endl;
+		cout << " Признак: в ремонте" << "\n" << endl;
 	}
-	else
+	if (p.priznak == 0)
 	{
-		cout << " Длина:" << p.length << endl;
-		cout << " Диаметр:" << p.diameter << endl;
-		if (p.priznak == 1)
-		{
-			cout << " Признак: в ремонте" << "\n" << endl;
-		}
-		if (p.priznak == 0)
-		{
-			cout << " Признак: не в ремонте" << "\n" << endl;
-		}
+		cout << " Признак: не в ремонте" << "\n" << endl;
 	}
 	return out;
 }
+	
+
 
 

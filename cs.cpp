@@ -1,7 +1,7 @@
+#include <fstream>
+#include <sstream>  
 #include "cs.h"
 #include "Utils.h"
-#include <fstream>
-#include <sstream>  // ошибка getline
 
 int cs::MaxID = 1;
 
@@ -25,6 +25,7 @@ void LoadCs(ifstream& fin, cs& s)
 {
 	fin >> s.id; fin.ignore(); getline(fin,s.name); fin >> s.quantity; fin >> s.work; fin >> s.effect;
 }
+
 void cs::EditCs()
 {
 	int edt_cs;
@@ -78,16 +79,11 @@ istream& operator >> (istream& in, cs& s) // Ввод компрессорной станции
 
 ostream& operator << (ostream& out, cs& s) // Печать компрессорной станции
 {
-	if (s.quantity == 0)
-	{
-		cout << "Компрессорная станция не введена" << "\n" << endl;
-	}
-	else {
-		cout << " Название:" << s.name << endl;
-		cout << " Количество цехов всего:" << s.quantity << endl;
-		cout << " Количество цехов в работе:" << s.work << endl;
-		cout << " Эффективность:" << s.effect << "\n" << endl;
-	}
+	cout << " Название:" << s.name << endl;
+	cout << " Количество цехов всего:" << s.quantity << endl;
+	cout << " Количество цехов в работе:" << s.work << endl;
+	cout << " Эффективность:" << s.effect << "\n" << endl;
+	
 	return out;
 }
 
