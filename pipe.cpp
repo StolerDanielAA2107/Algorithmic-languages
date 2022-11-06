@@ -3,23 +3,22 @@
 #include "pipe.h"
 #include "Utils.h"
 
-int pipe::MaxID = 1;
-
 using namespace std;
+
+int pipe::MaxID = 1;
 
 pipe::pipe()
 {
-	id = MaxID;
-	length = 0.0;
-	diameter = 0.0;
-	priznak = 0;
+	id = MaxID++;
+	length = { 0.0 };
+	diameter = { 0.0 };
+	priznak = { 0 };
 }
 
 void pipe::EditPipe()
 {
 	bool edt_p;
-
-		cout << " Для редактирования признака трубы нажмите 1 или 0 (< 1 в ремонте >,< 0 не в ремонте>)" << endl;
+	cout << " Для редактирования признака трубы нажмите 1 или 0 (< 1 в ремонте >,< 0 не в ремонте>)" << endl;
 		edt_p = InputCheck(0, 1);
 		if (edt_p == true)
 		{
@@ -67,6 +66,11 @@ ostream& operator << (ostream& out, const pipe& p) // Печать трубы
 	return out;
 }
 	
-
+void swap(bool &a, bool &b)
+{
+	int temp = a;
+	a = b;
+	b = temp;
+}
 
 

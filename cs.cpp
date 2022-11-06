@@ -3,17 +3,27 @@
 #include "cs.h"
 #include "Utils.h"
 
-int cs::MaxID = 1;
-
 using namespace std;
+
+int cs::MaxID = 1;
 
 cs::cs()
 {
-	id = MaxID;
-	name = "";
-	quantity = 0;
-	work = 0;
-	effect = 0.0;
+	id = MaxID++;
+	name = { "" };
+	quantity = { 0 };
+	work = { 0 };
+	effect = { 0.0 };
+}
+
+void cs::addwork()
+{
+	work += 1;
+}
+
+void cs::reducework()
+{
+	work -= 1;
 }
 
 void SaveCs(ofstream& fout, const cs& s)
@@ -24,42 +34,6 @@ void SaveCs(ofstream& fout, const cs& s)
 void LoadCs(ifstream& fin, cs& s)
 {
 	fin >> s.id; fin.ignore(); getline(fin,s.name); fin >> s.quantity; fin >> s.work; fin >> s.effect;
-}
-
-void cs::EditCs()
-{
-	int edt_cs;
-
-	cout << "Для редактирования параметра остановки или запуска цеха, выберите соответствующий пункт цифрой: " << endl;
-	cout << "1. Запуск цеха" << endl;
-	cout << "2. Остановка цеха" << endl;
-	edt_cs = InputCheck(1, 2);
-	if (edt_cs == 1)
-	{
-		if (work = quantity)
-		{
-			cout << "Все цеха запущены" << endl;
-		}
-		else
-		{
-			work += 1;
-			cout << "Цех запущен" << endl;
-		}
-	}
-	if (edt_cs == 2)
-	{
-		if (work == 0)
-		{
-			cout << "Количество работающих цехов нельзя уменьшить" << endl;
-		}
-		else
-		{
-			work -= 1;
-			cout << "Цех остановлен" << endl;
-		}
-	}
-
-
 }
 
 istream& operator >> (istream& in, cs& s) // Ввод компрессорной станции

@@ -1,17 +1,17 @@
-#pragma once
 #include <iostream>
 
 class cs
 {
 public:
-	int id;
 	static int MaxID;
+	int id;
 	std::string name;
-	int quantity;	
+	int quantity;
 	int work;	
 	double effect; 
 	cs();
-	void EditCs();
+	void addwork();
+	void reducework();
 	friend void SaveCs(std::ofstream& fout, const cs& s);
 	friend void LoadCs(std::ifstream& fin, cs& s);
 	friend std::istream& operator >> (std::istream& in, cs& s); // Ââîä ÊÑ

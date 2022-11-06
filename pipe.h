@@ -3,9 +3,9 @@
 class pipe
 {
 public:
-	int id;
 	static int MaxID;
-	double length;	
+	int id;
+	double length;
 	double diameter;
 	bool priznak;	
 	pipe();		
