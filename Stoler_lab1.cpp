@@ -30,8 +30,7 @@ vector <int> StringToNum(string& str) {
 	string s;
 	double d;
 	ss << str;
-	while (!ss.eof())
-	{
+	while (!ss.eof()) {
 		ss >> s;
 		if (stringstream(s) >> d)
 			vec.emplace_back(d);
@@ -111,19 +110,23 @@ void Search() {
 				}
 
 				if (v == 3) {
-					vector <int> str;
+					vector <int> vec;
 					string id;
 					cout << "Введите id труб(-ы):" << endl;
-					cin.ignore(1000, '\n');                                   //ДОПИЛИТЬ
-					cin.clear();											  //!!!!!!!!
+					cin.ignore(1000, '\n');                                  
+					cin.clear();											 
 					getline(cin, id);
-					str = StringToNum(id);
-					for (int i : str) {
-						for (auto& tb : pipes) {
-						
+					vec = StringToNum(id);
+					for (int i : vec) {
+						auto tb = pipes.find(i);
+						if (tb != pipes.end()) {
+							(*tb).second.changesign() ;
+							cout << (*tb).second.priznak << endl;
+							cout << "Состояние трубы с ID " << i << " изменено" << endl;
+						} else {
+							cout << "Id " << i << " не найден" << endl;
 						}
 					}
-					cout << "Состояние изменено" << endl;
 					break;
 				}
 
@@ -143,7 +146,7 @@ void Search() {
 					break;
 				}
 
-				if (v == 6) {
+				if (v == 0) {
 					break;
 				}
 			}
@@ -176,13 +179,12 @@ void Search() {
 			}
 
 			if (a == 2) {
-				cout << "Введите число:" << endl;
-				double dig; // digit, percentage                             // ДОПИЛИТЬ
-				int perc;													//  !!!!!!!!
-				dig = InputCheck(0.0, 100.0);
+				cout << "Введите число:" << endl;                            
+				int perc,dig;	 // digit, percentage						
+				dig = InputCheck(0, 100);
 				cout << "id найденных КС с введенным процентом:" << endl;
 				for (const auto& kc : css) {
-					perc = ((((kc.second.quantity) - kc.second.work) / kc.second.quantity) * 100);
+					perc = (((kc.second.quantity - kc.second.work) / float( kc.second.quantity))) * 100;
 					if (perc == dig) {
 						cout << kc.first << endl;
 					}
@@ -268,8 +270,8 @@ void SaveAll()
 	getline(cin, name);
 	ofile.open(name, ios::out);
 	if (ofile.is_open()) {
-		ofile << pipes.size() << "\n"; // запись количества труб
-		ofile << css.size() << "\n"; // запись количества КС
+		ofile << pipe::MaxID - 1 << "\n"; // запись количества труб
+		ofile << cs::MaxID - 1 << "\n"; // запись количества КС
 		for (const auto& tb : pipes)
 			SavePipe(ofile, tb.second);
 		for (const auto& kc : css)
@@ -289,33 +291,30 @@ void LoadAll()
 	getline(cin, name);
 	ifile.open(name, ios::in);
 
-	if (ifile.is_open() == 0)
-	{
+	if (ifile.is_open() == 0) {
 		cout << "Ошибка открытия файла" << endl;
 	} else if (ifile.peek() == EOF) {
 		cout << "Ошибка чтения: нет данных в файле." << endl;
 	} else {
 			pipes.clear();
 			css.clear();
-			int psz = pipes.size();
-			int csz = css.size();
-			ifile >> psz; // количествo труб
-			ifile >> csz; //  количествo КС
+			ifile >> pipe::MaxID; // количествo труб
+			ifile >> cs::MaxID; //  количествo КС
 			
 			pipe tb = pipe();
 			cs kc = cs();
-			for (int i = 1; i <= psz; ++i) {
+			do {
 				LoadPipe(ifile, tb);
 				pipes.emplace( tb.id, tb );
-			}
-	
-			for (int i = 1; i <= csz; ++i) {
+			} while (tb.id < pipe::MaxID - 1);
+			
+			do {
 				LoadCs(ifile, kc);
 				css.emplace( kc.id, kc );
-			}
+			} while (kc.id < cs::MaxID - 1);
 			ifile.close();
 			cout << "Загрузка выполнена." << endl;
-		}
+	}
 }
 
 void Delete() {

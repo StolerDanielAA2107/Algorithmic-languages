@@ -9,7 +9,7 @@ int cs::MaxID = 1;
 
 cs::cs()
 {
-	id = MaxID++;
+	id = cs::MaxID++;
 	name = { "" };
 	quantity = { 0 };
 	work = { 0 };
@@ -33,7 +33,7 @@ void SaveCs(ofstream& fout, const cs& s)
 
 void LoadCs(ifstream& fin, cs& s)
 {
-	fin >> s.id; fin.ignore(); getline(fin,s.name); fin >> s.quantity; fin >> s.work; fin >> s.effect;
+	fin.ignore(); fin >> s.id; fin.ignore(); getline(fin,s.name); fin >> s.quantity; fin >> s.work; fin >> s.effect;
 }
 
 istream& operator >> (istream& in, cs& s) // ¬вод компрессорной станции

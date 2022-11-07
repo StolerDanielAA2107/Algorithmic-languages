@@ -9,26 +9,15 @@ int pipe::MaxID = 1;
 
 pipe::pipe()
 {
-	id = MaxID++;
+	id = pipe::MaxID++;
 	length = { 0.0 };
 	diameter = { 0.0 };
 	priznak = { 0 };
 }
 
-void pipe::EditPipe()
+void pipe::changesign()
 {
-	bool edt_p;
-	cout << " Для редактирования признака трубы нажмите 1 или 0 (< 1 в ремонте >,< 0 не в ремонте>)" << endl;
-		edt_p = InputCheck(0, 1);
-		if (edt_p == true)
-		{
-			priznak = true;
-		}
-		if (edt_p == false)
-		{
-			priznak = false;
-		}
-		cout << "Параметр изменен" << endl;
+	priznak = priznak == 1 ? 0 : 1;
 }
 
 void LoadPipe(ifstream& fin, pipe& p)
@@ -65,12 +54,6 @@ ostream& operator << (ostream& out, const pipe& p) // Печать трубы
 	}
 	return out;
 }
-	
-void swap(bool &a, bool &b)
-{
-	int temp = a;
-	a = b;
-	b = temp;
-}
+
 
 
