@@ -1,5 +1,6 @@
 #pragma once
 #include<iostream>
+using namespace std;
 
 template <typename T>
 
@@ -14,3 +15,5 @@ T InputCheck(T min, T max)
 	}
 	return x;
 }
+
+
