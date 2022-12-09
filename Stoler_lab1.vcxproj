@@ -129,11 +129,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="cs.cpp" />
+    <ClCompile Include="Graph.cpp" />
     <ClCompile Include="pipe.cpp" />
     <ClCompile Include="Stoler_lab1.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cs.h" />
+    <ClInclude Include="Graph.h" />
     <ClInclude Include="pipe.h" />
     <ClInclude Include="Utils.h" />
   </ItemGroup>

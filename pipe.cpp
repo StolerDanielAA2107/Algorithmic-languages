@@ -14,6 +14,9 @@ pipe::pipe()
 	diameter = { 0 };
 	priznak = { 0 };
 	connect = { 0 };
+	outCsId = { -1 };
+	inCsId = { -1 };
+	used = { 0 };
 }
 
 pipe::pipe(int value)
@@ -23,6 +26,9 @@ pipe::pipe(int value)
 	diameter = { value };
 	priznak = { 0 };
 	connect = { 1 };
+	outCsId = { -1 };
+	inCsId = { -1 };
+	used = { 0 };
 }
 
 void pipe::changesign()
@@ -35,14 +41,18 @@ void pipe::connect1() // connect to 1
 	connect = 1;
 }
 
+void pipe::use() // connect to 1
+{
+	used = 1;
+}
 void LoadPipe(ifstream& fin, pipe& p)
 {
-	fin >> p.id; fin >> p.length; fin >> p.diameter; fin >> p.priznak;
+	fin >> p.id; fin >> p.length; fin >> p.diameter; fin >> p.priznak; fin >> p.connect;
 }
 
 void SavePipe(ofstream& fout, const pipe& p)
 {
-	fout << p.id << "\n" << p.length << "\n" << p.diameter << "\n" << p.priznak << endl;
+	fout << p.id << "\n" << p.length << "\n" << p.diameter << "\n" << p.priznak << "\n" << p.connect << endl;
 }
 
 istream& operator >> (istream& in, pipe& p) // Ввод трубы
@@ -59,6 +69,8 @@ istream& operator >> (istream& in, pipe& p) // Ввод трубы
 	case 3: p.diameter = 1400; break;
 	}
 	p.priznak = false;
+	p.outCsId = 0;
+	p.inCsId = 0;
 	return in;
 }
 
@@ -78,6 +90,7 @@ ostream& operator << (ostream& out, const pipe& p) // Печать трубы
 	if (p.connect == 0) {
 		cout << " Доступна для подключения: да" << "\n" << endl;
 	}
+
 	return out;
 }
 
